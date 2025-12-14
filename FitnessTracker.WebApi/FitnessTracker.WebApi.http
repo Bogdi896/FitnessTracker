@@ -1,0 +1,6 @@
+@FitnessTracker.WebApi_HostAddress = http://localhost:5001
+
+GET {{FitnessTracker.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
