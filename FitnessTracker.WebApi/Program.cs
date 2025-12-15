@@ -17,6 +17,9 @@ builder.Services.AddScoped<IWorkoutService, WorkoutService>();
 builder.Services.AddScoped<IExerciseService, ExerciseService>();
 builder.Services.AddScoped<IWorkoutExerciseService, WorkoutExerciseService>();
 builder.Services.AddScoped<IGoalService, GoalService>();
+builder.Services.AddScoped<IFoodItemService, FoodItemService>();
+builder.Services.AddScoped<IFoodLogService, FoodLogService>();
+builder.Services.AddScoped<IMeasurementLogService, MeasurementLogService>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
