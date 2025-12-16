@@ -1,10 +1,12 @@
 ﻿using FitnessTracker.Application.DTOs.Goal;
 using FitnessTracker.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.WebApi.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class GoalsController : ControllerBase
     {

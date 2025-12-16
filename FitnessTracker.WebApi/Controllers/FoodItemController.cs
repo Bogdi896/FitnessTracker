@@ -1,11 +1,13 @@
 ﻿using FitnessTracker.Application.DTOs.FoodItem;
 using FitnessTracker.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Memory;
 
 namespace FitnessTracker.WebApi.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class FoodItemsController : ControllerBase
     {
@@ -54,6 +56,7 @@ namespace FitnessTracker.WebApi.Controllers
             return Ok(item);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
         public async Task<ActionResult<FoodItemDto>> Create([FromBody] CreateFoodItemDto dto, CancellationToken cancellationToken)
         {
@@ -75,6 +78,7 @@ namespace FitnessTracker.WebApi.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id:int}")]
         public async Task<ActionResult<FoodItemDto>> Update(int id, [FromBody] UpdateFoodItemDto dto, CancellationToken cancellationToken)
         {
@@ -99,6 +103,7 @@ namespace FitnessTracker.WebApi.Controllers
             }
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {

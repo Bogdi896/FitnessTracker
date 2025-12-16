@@ -1,10 +1,12 @@
 ﻿using FitnessTracker.Application.DTOs.Workout;
 using FitnessTracker.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace FitnessTracker.WebApi.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class WorkoutsController : ControllerBase
     {
@@ -17,8 +19,6 @@ namespace FitnessTracker.WebApi.Controllers
             _logger = logger;
         }
 
-        // GET: api/workouts
-        // Optional: /api/workouts?userId=1
         [HttpGet]
         public async Task<ActionResult<IEnumerable<WorkoutDto>>> GetAll([FromQuery] int? userId, CancellationToken cancellationToken)
         {
@@ -32,7 +32,6 @@ namespace FitnessTracker.WebApi.Controllers
             return Ok(workouts);
         }
 
-        // GET: api/workouts/5
         [HttpGet("{id:int}")]
         public async Task<ActionResult<WorkoutDto>> GetById(int id, CancellationToken cancellationToken)
         {
@@ -43,7 +42,6 @@ namespace FitnessTracker.WebApi.Controllers
             return Ok(workout);
         }
 
-        // POST: api/workouts
         [HttpPost]
         public async Task<ActionResult<WorkoutDto>> Create([FromBody] CreateWorkoutDto dto, CancellationToken cancellationToken)
         {
@@ -68,7 +66,6 @@ namespace FitnessTracker.WebApi.Controllers
             }
         }
 
-        // PUT: api/workouts/5
         [HttpPut("{id:int}")]
         public async Task<ActionResult<WorkoutDto>> Update(int id, [FromBody] UpdateWorkoutDto dto, CancellationToken cancellationToken)
         {
@@ -92,7 +89,6 @@ namespace FitnessTracker.WebApi.Controllers
             }
         }
 
-        // DELETE: api/workouts/5
         [HttpDelete("{id:int}")]
         public async Task<IActionResult> Delete(int id, CancellationToken cancellationToken)
         {
