@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using FitnessTracker.Infrastructure.Repositories;
 using FitnessTracker.Application.Interfaces;
 using FitnessTracker.Application.Services;
+using FitnessTracker.WebApi.Middleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -24,6 +25,8 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();
+
+app.UseGlobalExceptionHandling();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
