@@ -1,6 +1,7 @@
 ﻿using FitnessTracker.Application.DTOs.Exercise;
 using FitnessTracker.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FitnessTracker.WebApi.Controllers
 {
@@ -10,17 +11,36 @@ namespace FitnessTracker.WebApi.Controllers
     {
         private readonly IExerciseService _exerciseService;
         private readonly ILogger<ExercisesController> _logger;
+        private readonly IMemoryCache _cache;
 
-        public ExercisesController(IExerciseService exerciseService, ILogger<ExercisesController> logger)
+        public ExercisesController(IExerciseService exerciseService, ILogger<ExercisesController> logger, IMemoryCache cache)
         {
             _exerciseService = exerciseService;
             _logger = logger;
+            _cache = cache;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ExerciseDto>>> GetAll(CancellationToken cancellationToken)
         {
-            var exercises = await _exerciseService.GetAllAsync(cancellationToken);
+            const string cacheKey = "Exercises_All";
+
+            if (!_cache.TryGetValue(cacheKey, out IEnumerable<ExerciseDto>? exercises))
+            {
+                _logger.LogInformation("Cache miss for {CacheKey}. Loading exercises from database.", cacheKey);
+
+                exercises = await _exerciseService.GetAllAsync(cancellationToken);
+
+                var cacheOptions = new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
+
+                _cache.Set(cacheKey, exercises, cacheOptions);
+            }
+            else
+            {
+                _logger.LogInformation("Cache hit for {CacheKey}. Returning exercises from cache.", cacheKey);
+            }
+
             return Ok(exercises);
         }
 

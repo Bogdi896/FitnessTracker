@@ -32,7 +32,7 @@ namespace FitnessTracker.WebApi.Controllers
                 items = await _service.GetAllAsync(cancellationToken);
 
                 var cacheOptions = new MemoryCacheEntryOptions()
-                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(1));  // cache for 1 minute
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(1));
 
                 _cache.Set(cacheKey, items, cacheOptions);
             }
