@@ -60,6 +60,7 @@ namespace FitnessTracker.WebApi.Controllers
             try
             {
                 var created = await _exerciseService.CreateAsync(dto, cancellationToken);
+                _cache.Remove("Exercises_All");
 
                 return CreatedAtAction(
                     nameof(GetById),
@@ -87,6 +88,7 @@ namespace FitnessTracker.WebApi.Controllers
                 if (updated == null)
                     return NotFound();
 
+                _cache.Remove("Exercises_All");
                 return Ok(updated);
             }
             catch (ArgumentException ex)
