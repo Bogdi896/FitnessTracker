@@ -1,6 +1,7 @@
 ﻿using FitnessTracker.Application.DTOs.FoodItem;
 using FitnessTracker.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Caching.Memory;
 
 namespace FitnessTracker.WebApi.Controllers
 {
@@ -10,17 +11,36 @@ namespace FitnessTracker.WebApi.Controllers
     {
         private readonly IFoodItemService _service;
         private readonly ILogger<FoodItemsController> _logger;
+        private readonly IMemoryCache _cache;
 
-        public FoodItemsController(IFoodItemService service, ILogger<FoodItemsController> logger)
+        public FoodItemsController(IFoodItemService service, ILogger<FoodItemsController> logger, IMemoryCache cache)
         {
             _service = service;
             _logger = logger;
+            _cache = cache;
         }
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FoodItemDto>>> GetAll(CancellationToken cancellationToken)
         {
-            var items = await _service.GetAllAsync(cancellationToken);
+            const string cacheKey = "FoodItems_All";
+
+            if (!_cache.TryGetValue(cacheKey, out IEnumerable<FoodItemDto>? items))
+            {
+                _logger.LogInformation("Cache miss for {CacheKey}. Loading food items from database.", cacheKey);
+
+                items = await _service.GetAllAsync(cancellationToken);
+
+                var cacheOptions = new MemoryCacheEntryOptions()
+                    .SetAbsoluteExpiration(TimeSpan.FromMinutes(1));  // cache for 1 minute
+
+                _cache.Set(cacheKey, items, cacheOptions);
+            }
+            else
+            {
+                _logger.LogInformation("Cache hit for {CacheKey}. Returning food items from cache.", cacheKey);
+            }
+
             return Ok(items);
         }
 
