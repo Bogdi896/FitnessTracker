@@ -3,6 +3,7 @@ using FitnessTracker.Application.Interfaces;
 using FitnessTracker.Application.Mappings;
 using FitnessTracker.Domain.Entities;
 using FitnessTracker.Infrastructure.Repositories;
+using FitnessTracker.Application.Validators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,7 +38,7 @@ namespace FitnessTracker.Application.Services
 
         public async Task<WorkoutExerciseDto> CreateAsync(CreateWorkoutExerciseDto dto, CancellationToken cancellationToken)
         {
-            ValidateWorkoutExercise(dto.Sets, dto.Reps, dto.WeightUsed);
+            WorkoutExerciseValidator.ValidateWorkoutExercise(dto.Sets, dto.Reps, dto.WeightUsed);
 
             var workout = await _unitOfWork.Workouts.GetByIdAsync(dto.WorkoutId);
             if (workout == null)
@@ -62,7 +63,7 @@ namespace FitnessTracker.Application.Services
 
         public async Task<WorkoutExerciseDto?> UpdateAsync(int workoutId, int exerciseId, UpdateWorkoutExerciseDto dto, CancellationToken cancellationToken)
         {
-            ValidateWorkoutExercise(dto.Sets, dto.Reps, dto.WeightUsed);
+            WorkoutExerciseValidator.ValidateWorkoutExercise(dto.Sets, dto.Reps, dto.WeightUsed);
 
             var items = await _unitOfWork.WorkoutExercises.FindAsync(we =>
                 we.WorkoutId == workoutId && we.ExerciseId == exerciseId);
@@ -90,18 +91,6 @@ namespace FitnessTracker.Application.Services
             _unitOfWork.WorkoutExercises.Delete(entity);
             await _unitOfWork.SaveChangesAsync();
             return true;
-        }
-
-        private static void ValidateWorkoutExercise(int sets, int reps, decimal? weightUsed)
-        {
-            if (sets <= 0)
-                throw new ArgumentException("Sets must be a positive value.", nameof(sets));
-
-            if (reps <= 0)
-                throw new ArgumentException("Reps must be a positive value.", nameof(reps));
-
-            if (weightUsed.HasValue && weightUsed.Value < 0)
-                throw new ArgumentException("Weight used cannot be negative.", nameof(weightUsed));
         }
     }
 }

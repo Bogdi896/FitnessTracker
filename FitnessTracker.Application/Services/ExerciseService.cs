@@ -8,18 +8,13 @@ using FitnessTracker.Application.Interfaces;
 using FitnessTracker.Application.Mappings;
 using FitnessTracker.Domain.Entities;
 using FitnessTracker.Infrastructure.Repositories;
+using FitnessTracker.Application.Validators;
 
 namespace FitnessTracker.Application.Services
 {
     public class ExerciseService : IExerciseService
     {
         private readonly IUnitOfWork _unitOfWork;
-
-        private static readonly string[] AllowedMuscleGroups =
-            { "back", "chest", "arms", "shoulders", "legs", "abdomen" };
-
-        private static readonly string[] AllowedDifficultyLevels =
-            { "beginner", "intermediate", "advanced" };
 
         public ExerciseService(IUnitOfWork unitOfWork)
         {
@@ -40,7 +35,7 @@ namespace FitnessTracker.Application.Services
 
         public async Task<ExerciseDto> CreateAsync(CreateExerciseDto dto, CancellationToken cancellationToken)
         {
-            ValidateExercise(dto);
+            ExerciseValidator.ValidateExercise(dto);
 
             var existing = await _unitOfWork.Exercises.FindAsync(e =>
                 e.Name.ToLower() == dto.Name.ToLower());
@@ -57,7 +52,7 @@ namespace FitnessTracker.Application.Services
 
         public async Task<ExerciseDto?> UpdateAsync(int id, UpdateExerciseDto dto, CancellationToken cancellationToken)
         {
-            ValidateExercise(dto);
+            ExerciseValidator.ValidateExercise(dto);
 
             var exercise = await _unitOfWork.Exercises.GetByIdAsync(id);
             if (exercise == null)
@@ -102,42 +97,6 @@ namespace FitnessTracker.Application.Services
             _unitOfWork.Exercises.Delete(exercise);
             await _unitOfWork.SaveChangesAsync();
             return true;
-        }
-
-        private static void ValidateExercise(CreateExerciseDto dto)
-        {
-            ValidateCommon(dto.Name, dto.MuscleGroup, dto.DifficultyLevel);
-        }
-
-        private static void ValidateExercise(UpdateExerciseDto dto)
-        {
-            ValidateCommon(dto.Name, dto.MuscleGroup, dto.DifficultyLevel);
-        }
-
-        private static void ValidateCommon(string name, string muscleGroup, string difficultyLevel)
-        {
-            if (string.IsNullOrWhiteSpace(name))
-                throw new ArgumentException("Name is required.", nameof(name));
-            if (name.Length > 100)
-                throw new ArgumentException("Name must be at most 100 characters.", nameof(name));
-
-            if (string.IsNullOrWhiteSpace(muscleGroup))
-                throw new ArgumentException("Muscle group is required.", nameof(muscleGroup));
-
-            var mg = muscleGroup.Trim().ToLowerInvariant();
-            if (!AllowedMuscleGroups.Contains(mg))
-                throw new ArgumentException(
-                    $"Muscle group must be one of: {string.Join(", ", AllowedMuscleGroups)}.",
-                    nameof(muscleGroup));
-
-            if (string.IsNullOrWhiteSpace(difficultyLevel))
-                throw new ArgumentException("Difficulty level is required.", nameof(difficultyLevel));
-
-            var diff = difficultyLevel.Trim().ToLowerInvariant();
-            if (!AllowedDifficultyLevels.Contains(diff))
-                throw new ArgumentException(
-                    $"Difficulty level must be one of: {string.Join(", ", AllowedDifficultyLevels)}.",
-                    nameof(difficultyLevel));
         }
     }
 }

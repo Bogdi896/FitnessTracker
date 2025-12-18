@@ -8,6 +8,7 @@ using FitnessTracker.Application.Interfaces;
 using FitnessTracker.Application.Mappings;
 using FitnessTracker.Domain.Entities;
 using FitnessTracker.Infrastructure.Repositories;
+using FitnessTracker.Application.Validators;
 
 namespace FitnessTracker.Application.Services
 {
@@ -44,7 +45,7 @@ namespace FitnessTracker.Application.Services
             if (user == null)
                 throw new ArgumentException("User not found.", nameof(dto.UserId));
 
-            ValidateWorkout(dto, user);
+            WorkoutValidator.ValidateWorkout(dto, user);
 
             var duplicates = await _unitOfWork.Workouts.FindAsync(w =>
                 w.UserId == dto.UserId &&
@@ -75,7 +76,7 @@ namespace FitnessTracker.Application.Services
             if (user == null)
                 throw new InvalidOperationException("Workout's user no longer exists.");
 
-            ValidateWorkout(dto, user);
+            WorkoutValidator.ValidateWorkout(dto, user);
 
             var duplicates = await _unitOfWork.Workouts.FindAsync(w =>
                 w.UserId == workout.UserId &&
@@ -96,7 +97,6 @@ namespace FitnessTracker.Application.Services
 
             return workout.ToDto();
         }
-
         public async Task<bool> DeleteAsync(int id, CancellationToken cancellationToken)
         {
             var workout = await _unitOfWork.Workouts.GetByIdAsync(id);
@@ -106,32 +106,6 @@ namespace FitnessTracker.Application.Services
             _unitOfWork.Workouts.Delete(workout);
             await _unitOfWork.SaveChangesAsync();
             return true;
-        }
-
-        private static void ValidateWorkout(CreateWorkoutDto dto, User user)
-        {
-            ValidateCommon(dto.Date, dto.DurationInMinutes, user);
-        }
-
-        private static void ValidateWorkout(UpdateWorkoutDto dto, User user)
-        {
-            ValidateCommon(dto.Date, dto.DurationInMinutes, user);
-        }
-
-        private static void ValidateCommon(DateTime date, int durationMinutes, User user)
-        {
-            var now = DateTime.UtcNow;
-            if (date > now)
-                throw new ArgumentException("Workout date cannot be in the future.", nameof(date));
-
-            if (durationMinutes <= 0)
-                throw new ArgumentException("Duration must be positive.", nameof(durationMinutes));
-
-            if (durationMinutes < 5 || durationMinutes > 300)
-                throw new ArgumentException("Duration must be between 5 and 300 minutes.", nameof(durationMinutes));
-
-            if (date < user.RegistrationDate)
-                throw new ArgumentException("Workout date cannot be before user registration date.", nameof(date));
         }
     }
 }

@@ -3,6 +3,7 @@ using FitnessTracker.Application.Interfaces;
 using FitnessTracker.Application.Mappings;
 using FitnessTracker.Domain.Entities;
 using FitnessTracker.Infrastructure.Repositories;
+using FitnessTracker.Application.Validators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -40,7 +41,7 @@ namespace FitnessTracker.Application.Services
             var food = await _unitOfWork.FoodItems.GetByIdAsync(dto.FoodId)
                 ?? throw new ArgumentException("Food item not found.", nameof(dto.FoodId));
 
-            Validate(dto, user);
+            FoodLogValidator.Validate(dto, user);
 
             var entity = dto.ToEntity();
             await _unitOfWork.FoodLogs.AddAsync(entity);
@@ -58,7 +59,7 @@ namespace FitnessTracker.Application.Services
             var user = await _unitOfWork.Users.GetByIdAsync(log.UserId)
                 ?? throw new InvalidOperationException("User associated with log was not found.");
 
-            Validate(dto, user);
+            FoodLogValidator.Validate(dto, user);
 
             log.UpdateEntity(dto);
             _unitOfWork.FoodLogs.Update(log);
@@ -76,31 +77,6 @@ namespace FitnessTracker.Application.Services
             _unitOfWork.FoodLogs.Delete(log);
             await _unitOfWork.SaveChangesAsync();
             return true;
-        }
-
-        private static void Validate(CreateFoodLogDto dto, User user)
-        {
-            ValidateCommon(dto.LogDate, dto.Servings, dto.Quantity, user);
-        }
-
-        private static void Validate(UpdateFoodLogDto dto, User user)
-        {
-            ValidateCommon(dto.LogDate, dto.Servings, dto.Quantity, user);
-        }
-
-        private static void ValidateCommon(DateTime logDate, decimal servings, int quantity, User user)
-        {
-            if (logDate > DateTime.UtcNow)
-                throw new ArgumentException("Log date cannot be in the future.", nameof(logDate));
-
-            if (logDate < user.RegistrationDate)
-                throw new ArgumentException("Food log cannot occur before user registration date.", nameof(logDate));
-
-            if (servings <= 0)
-                throw new ArgumentException("Servings must be greater than zero.", nameof(servings));
-
-            if (quantity <= 0)
-                throw new ArgumentException("Quantity must be greater than zero.", nameof(quantity));
         }
     }
 }
