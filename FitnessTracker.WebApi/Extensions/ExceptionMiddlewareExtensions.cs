@@ -1,4 +1,6 @@
-﻿namespace FitnessTracker.WebApi.Middleware
+﻿using FitnessTracker.WebApi.Middleware;
+
+namespace FitnessTracker.WebApi.Extensions
 {
     public static class ExceptionMiddlewareExtensions
     {

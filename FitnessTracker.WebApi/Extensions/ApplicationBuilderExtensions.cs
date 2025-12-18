@@ -1,5 +1,4 @@
-﻿using FitnessTracker.WebApi.Middleware;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.Hosting;
 
 namespace FitnessTracker.WebApi.Extensions
