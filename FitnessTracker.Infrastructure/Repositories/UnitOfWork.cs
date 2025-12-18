@@ -1,5 +1,6 @@
 ﻿using FitnessTracker.Domain.Entities;
 using FitnessTracker.Infrastructure.Data;
+using FitnessTracker.Application.Interfaces;
 
 namespace FitnessTracker.Infrastructure.Repositories
 {

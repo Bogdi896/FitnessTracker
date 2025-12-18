@@ -1,7 +1,6 @@
 ﻿using FitnessTracker.Application.DTOs.FoodItem;
 using FitnessTracker.Application.Interfaces;
 using FitnessTracker.Application.Mappings;
-using FitnessTracker.Infrastructure.Repositories;
 using FitnessTracker.Application.Validators;
 using System;
 using System.Collections.Generic;

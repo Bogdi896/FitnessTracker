@@ -1,5 +1,4 @@
 ﻿using FitnessTracker.Application.DTOs.Auth;
-using FitnessTracker.Application.DTOs.Auth.FitnessTracker.Application.DTOs.Auth;
 using System;
 using System.Collections.Generic;
 using System.Linq;

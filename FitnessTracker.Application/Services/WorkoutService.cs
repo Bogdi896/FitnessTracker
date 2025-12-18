@@ -7,7 +7,6 @@ using FitnessTracker.Application.DTOs.Workout;
 using FitnessTracker.Application.Interfaces;
 using FitnessTracker.Application.Mappings;
 using FitnessTracker.Domain.Entities;
-using FitnessTracker.Infrastructure.Repositories;
 using FitnessTracker.Application.Validators;
 
 namespace FitnessTracker.Application.Services

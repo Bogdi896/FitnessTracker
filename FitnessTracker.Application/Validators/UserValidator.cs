@@ -1,4 +1,5 @@
-﻿using FitnessTracker.Application.DTOs.User;
+﻿using FitnessTracker.Application.DTOs.Auth;
+using FitnessTracker.Application.DTOs.User;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,6 +10,17 @@ namespace FitnessTracker.Application.Validators
 {
     public static class UserValidator
     {
+        public static void ValidateUser(RegisterUserDto dto)
+        {
+            ValidateCommon(
+                dto.Name,
+                dto.Email,
+                dto.BirthDate,
+                dto.Gender,
+                dto.Height,
+                dto.Weight
+            );
+        }
         public static void ValidateUser(CreateUserDto dto)
         {
             ValidateCommon(

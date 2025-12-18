@@ -1,6 +1,6 @@
 ﻿using FitnessTracker.Application.DTOs.Goal;
 using FitnessTracker.Domain.Entities;
-using FitnessTracker.Infrastructure.Repositories;
+using FitnessTracker.Application.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;

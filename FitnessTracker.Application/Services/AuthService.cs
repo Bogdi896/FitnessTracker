@@ -1,9 +1,8 @@
 ﻿using FitnessTracker.Application.DTOs.Auth;
-using FitnessTracker.Application.DTOs.Auth.FitnessTracker.Application.DTOs.Auth;
 using FitnessTracker.Application.Interfaces;
 using FitnessTracker.Application.Security;
+using FitnessTracker.Application.Validators;
 using FitnessTracker.Domain.Entities;
-using FitnessTracker.Infrastructure.Repositories;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
@@ -14,7 +13,7 @@ using System.Text;
 
 namespace FitnessTracker.Application.Services
 {
-    internal class AuthService : IAuthService
+    public class AuthService : IAuthService
     {
         private readonly IConfiguration _configuration;
         private readonly ILogger<AuthService> _logger;
@@ -30,26 +29,7 @@ namespace FitnessTracker.Application.Services
             RegisterUserDto dto,
             CancellationToken cancellationToken)
         {
-            // username unique
-            var existingByUsername = await _unitOfWork.Users.FindAsync(u => u.Username == dto.Username);
-            if (existingByUsername.Any())
-            {
-                _logger.LogWarning("Registration failed: username {Username} already exists.", dto.Username);
-                throw new ArgumentException("Username already exists.", nameof(dto.Username));
-            }
-
-            // email unique
-            var existingByEmail = await _unitOfWork.Users.FindAsync(u => u.Email == dto.Email);
-            if (existingByEmail.Any())
-            {
-                _logger.LogWarning("Registration failed: email {Email} already exists.", dto.Email);
-                throw new ArgumentException("Email already exists.", nameof(dto.Email));
-            }
-
-            if (string.IsNullOrWhiteSpace(dto.Password) || dto.Password.Length < 6)
-            {
-                throw new ArgumentException("Password must be at least 6 characters long.", nameof(dto.Password));
-            }
+            await AuthValidator.ValidateRegisterDto(dto, _unitOfWork, _logger, cancellationToken);
 
             var user = new User
             {

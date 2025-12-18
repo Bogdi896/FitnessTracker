@@ -4,8 +4,6 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace FitnessTracker.Application.DTOs.Auth
-{
     namespace FitnessTracker.Application.DTOs.Auth
     {
         public class AuthResponseDto
@@ -18,4 +16,3 @@ namespace FitnessTracker.Application.DTOs.Auth
             public string Role { get; set; } = null!;
         }
     }
-}
