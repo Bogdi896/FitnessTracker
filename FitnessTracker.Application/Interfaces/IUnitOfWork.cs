@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using FitnessTracker.Domain.Entities;
 
-namespace FitnessTracker.Infrastructure.Repositories
+namespace FitnessTracker.Application.Interfaces
 {
     public interface IUnitOfWork
     {

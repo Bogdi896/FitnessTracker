@@ -28,6 +28,15 @@ public partial class User
     [Column(TypeName = "decimal(5, 2)")]
     public decimal Weight { get; set; }
 
+    [StringLength(100)]
+    public string Username { get; set; } = null!;
+
+    [StringLength(200)]
+    public string PasswordHash { get; set; } = null!;
+
+    [StringLength(20)]
+    public string Role { get; set; } = "User"; // "User" or "Admin"
+
     public DateTime RegistrationDate { get; set; }
 
     [InverseProperty("User")]

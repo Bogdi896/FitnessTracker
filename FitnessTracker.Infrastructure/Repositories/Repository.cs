@@ -1,10 +1,12 @@
-﻿using System;
+﻿using FitnessTracker.Infrastructure.Data;
+using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text;
 using System.Threading.Tasks;
-using FitnessTracker.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
+using FitnessTracker.Application.Interfaces;
 
 namespace FitnessTracker.Infrastructure.Repositories
 {
@@ -37,5 +39,8 @@ namespace FitnessTracker.Infrastructure.Repositories
         {
             _dbSet.Remove(entity);
         }
+        public async Task<IEnumerable<T>> FindAsync(Expression<Func<T, bool>> predicate) =>
+    await _dbSet.Where(predicate).ToListAsync();
+
     }
 }

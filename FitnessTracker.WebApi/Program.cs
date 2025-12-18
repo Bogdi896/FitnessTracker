@@ -1,32 +1,21 @@
-using FitnessTracker.Infrastructure.Data;
-using Microsoft.EntityFrameworkCore;
-using FitnessTracker.Infrastructure.Repositories;
-
+﻿using FitnessTracker.WebApi.Extensions;
+using FitnessTracker.Application;
+using FitnessTracker.Infrastructure;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-
+// Service registrations
 builder.Services.AddControllers();
-builder.Services.AddDbContext<FitnessTrackerDbContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("FitnessTrackerDb")));
-builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddApplicationServices();
+builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddMemoryCache();
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+builder.Services.AddSwaggerDocumentation();
+builder.Services.AddJwtAuthentication(builder.Configuration);
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
-
-app.UseHttpsRedirection();
-
-app.UseAuthorization();
-
+// Pipeline
+app.UseFitnessTrackerPipeline(app.Environment);
 app.MapControllers();
-
 app.Run();
